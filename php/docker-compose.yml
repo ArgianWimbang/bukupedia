@@ -1,0 +1,39 @@
+version: '3.8'
+services:
+  php-apache-environment:
+    image: argn5515/php
+    container_name: php-apache
+    depends_on:
+      - db
+    volumes:
+      - ./php/src:/var/www/html/
+    ports:
+      - 80:80
+    networks:
+      - backend
+  
+  db: 
+    container_name: db
+    image: mysql
+    restar: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: toko_buku
+    ports:
+      - "3306:3306"
+    volumes:
+      - db:/var/lib/mysql
+      - ./toko_buku.sql:/docker-entrypoint-intdb.d/toko_buku.sql
+    networks:
+      - backend
+
+volumes:
+  db:
+
+networks:
+  backend:
+    name: backend-network
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.10.0.0/24
